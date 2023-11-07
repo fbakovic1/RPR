@@ -1,66 +1,109 @@
 package org.example;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Imenik {
 
-    private HashMap<String, TelefonskiBroj> mapa;
+    private HashMap<String, TelefonskiBroj> brojevi;
 
-    public Imenik(){ mapa = new HashMap<>(); }
+    public Imenik(){
+        this.brojevi = new HashMap<String, TelefonskiBroj>();
+    }
 
-    public void dodaj(String ime, TelefonskiBroj broj){ mapa.put(ime,broj); }
+    public Map<String, TelefonskiBroj> getBrojevi() {
+        return brojevi;
+    }
 
-    public String dajBroj(String ime){ return mapa.get(ime).ispisi(); }
+    public void setBrojevi(HashMap<String, TelefonskiBroj> brojevi) {
+        this.brojevi = brojevi;
+    }
 
-    public String dajIme(String broj){
-        String ime="";
-        for(HashMap.Entry<String,TelefonskiBroj> entry : mapa.entrySet()){
-            if(entry.getValue().equals(broj)){
-                ime = new String(entry.getKey());
-                break;
+    public void dodaj(String ime, TelefonskiBroj broj){ brojevi.put(ime,broj); }
+
+    public String dajBroj(String ime){
+        TelefonskiBroj broj = this.brojevi.get(ime);
+        if (broj != null){
+            return broj.ispisi();
+        }
+        else{
+            return null;
+        }
+    }
+
+    public String dajIme(TelefonskiBroj broj){
+        for(Map.Entry<String,TelefonskiBroj> entry : this.brojevi.entrySet()){
+            if(entry.getValue().ispisi().equals(broj.ispisi())){
+                return entry.getKey();
             }
         }
-        return ime;
+        return null;
     }
 
     public String naSlovo(char s){
-        String imena = "";
-        int br = 1;
-        for(HashMap.Entry<String,TelefonskiBroj> entry : mapa.entrySet()){
-            if(entry.getKey().charAt(0) == s){
-                imena += br + ". " + entry.getKey() + " - " + entry.getValue().ispisi() + "\n";
-                br++;
+        StringBuilder builder = new StringBuilder();
+        int brojac = 1;
+        for (Map.Entry<String, TelefonskiBroj> entry : this.brojevi.entrySet()){
+            if (entry.getKey().startsWith(String.valueOf(s))) {
+                builder.append(brojac)
+                        .append(". ")
+                        .append(entry.getKey())
+                        .append(" - ")
+                        .append(entry.getValue().ispisi())
+                        .append(System.lineSeparator());
             }
+            brojac++;
         }
-        return imena;
+        return builder.toString();
     }
 
     public Set<String> izGrada(Grad g){
-        Set<String> skup = new TreeSet<>();
+        Set<String> skup = new TreeSet<String>();
 
-        for(HashMap.Entry<String,TelefonskiBroj> entry : mapa.entrySet()){
-            if(entry.getValue() instanceof FiksniBroj){
-                FiksniBroj temp = (FiksniBroj) entry.getValue();
-                if(temp.dajGrad().equals(g)) {
-                    skup.add(entry.getKey());
-                }
+        for(Map.Entry<String,TelefonskiBroj> entry : this.brojevi.entrySet()){
+            if(jelIzGrada(entry.getValue(), g)) {
+                skup.add(entry.getKey());
             }
         }
         return skup;
     }
 
-    public Set<TelefonskiBroj> izGradaBrojevi(Grad g){
-        Set<TelefonskiBroj> skup = new TreeSet<>();
+    private boolean jelIzGrada(TelefonskiBroj broj, Grad g) {
+        if (broj instanceof FiksniBroj) {
+            return g.equals(((FiksniBroj) broj).getGrad());
+        }
+        else {
+            return false;
+        }
+    }
 
-        for(HashMap.Entry<String,TelefonskiBroj> entry : mapa.entrySet()){
-            if(entry.getValue() instanceof FiksniBroj){
-                FiksniBroj temp = (FiksniBroj) entry.getValue();
-                if(temp.dajGrad().equals(g)) {
-                    skup.add(entry.getValue());
-                }
+    public Set<TelefonskiBroj> izGradaBrojevi(Grad g){
+        Set<TelefonskiBroj> skup = new TreeSet<TelefonskiBroj>(new Comparator<TelefonskiBroj>() {
+            @Override
+            public int compare(TelefonskiBroj o1, TelefonskiBroj o2) {
+                return o1.ispisi().compareTo(o2.ispisi());
+            }
+        });
+
+        for(Map.Entry<String,TelefonskiBroj> entry : brojevi.entrySet()){
+            if (jelIzGrada(entry.getValue(), g)) {
+                skup.add(entry.getValue());
             }
         }
         return skup;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        int brojac = 1;
+        for (Map.Entry<String, TelefonskiBroj> entry : this.brojevi.entrySet()){
+            builder.append(brojac)
+                    .append(". ")
+                    .append(entry.getKey())
+                    .append(" - ")
+                    .append(entry.getValue().ispisi())
+                    .append(System.lineSeparator());
+            brojac++;
+        }
+        return builder.toString();
     }
 }
