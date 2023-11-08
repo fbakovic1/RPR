@@ -24,9 +24,7 @@ public class Imenik {
         if (broj != null){
             return broj.ispisi();
         }
-        else{
-            return null;
-        }
+        return null;
     }
 
     public String dajIme(TelefonskiBroj broj){
@@ -49,8 +47,8 @@ public class Imenik {
                         .append(" - ")
                         .append(entry.getValue().ispisi())
                         .append(System.lineSeparator());
+                brojac++;
             }
-            brojac++;
         }
         return builder.toString();
     }

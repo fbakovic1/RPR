@@ -17,14 +17,17 @@ public class FiksniBroj extends TelefonskiBroj{
         if (grad != null && broj != null){
             return grad.getPozivniBroj() + '/' + broj;
         }
-        else{
-            return null;
-        }
+        return null;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(grad, broj);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return Objects.equals(obj.toString(), this.broj);
     }
 
     public Grad getGrad() {
