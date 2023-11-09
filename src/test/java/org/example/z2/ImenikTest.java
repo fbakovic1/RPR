@@ -1,7 +1,9 @@
-package org.example;
+package org.example.z2;
 
+import org.example.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+
 
 import java.util.Set;
 import java.util.TreeSet;
